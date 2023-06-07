@@ -41,8 +41,10 @@ RUN apt-get update && \
 
 # Build go code
 FROM golang:1.20.4 as build2
-COPY ./handler.go .
-RUN GOOS=linux GOARCH=amd64 go build -o /build/handler handler.go
+WORKDIR /go/delivery
+COPY *.go .
+COPY *.mod .
+RUN GOOS=linux GOARCH=amd64 go build -o /build/handler
 
 # Run Azure Functions
 FROM mcr.microsoft.com/dotnet/runtime:6.0
@@ -59,7 +61,7 @@ COPY --from=build1 /FuncExtensionBundles /FuncExtensionBundles
 COPY --from=build2 /build/handler /home/site/wwwroot/
 
 COPY ./host.json /home/site/wwwroot/host.json
-COPY ./test/function.json /home/site/wwwroot/test/function.json
+COPY ./InvokeTask/function.json /home/site/wwwroot/InvokeTask/function.json
 
 RUN cd /home/site/wwwroot
 
