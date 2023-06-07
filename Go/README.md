@@ -38,3 +38,38 @@ az functionapp config container set \
   --name <APP_NAME> \
   --resource-group <RESOURCE_GROUP>
 ```
+
+## Sample Workflow
+
+```yaml
+id: deploymentplan
+name: Sample Deployment Plan
+version: '1.0'
+specVersion: '0.8'
+states:
+  - name: InvokeTask1
+    type: operation
+    actions:
+      - name: Invoke InvokeTask1 Function
+        functionRef: Task1
+    transition: InvokeTask2
+  - name: InvokeTask2
+    type: operation
+    actions:
+      - name: Invoke Task2 Function
+        functionRef: Task2
+    transition: InvokeTask3
+  - name: InvokeTask3
+    type: operation
+    actions:
+      - name: Invoke Task3 Function
+        functionRef: Task3
+    end: true
+functions:
+  - name: Task1
+    type: rest
+  - name: Task2
+    type: rest
+  - name: Task3
+    type: rest
+```

@@ -4,22 +4,24 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
-	"reflect"
 )
 
 func taskHandler(w http.ResponseWriter, r *http.Request) {
-	message := "This HTTP triggered function executed successfully. Pass a task in the query string for a personalized response.\n"
-	taskName := r.URL.Query().Get("task")
-	if taskName != "" {
-		method := reflect.ValueOf(TaskType(0)).MethodByName(taskName)
-		if !method.IsValid() {
-			message = "Task not found!"
+	message := "This HTTP triggered function executed successfully.\n"
+	reqBody, err := ioutil.ReadAll(r.Body)
+	if err == nil {
+		wf, err := ParseWorkflow(reqBody)
+		if err == nil {
+			states := wf.States
+			ExecuteStateAndReturnNext(wf.States, states[0])
 		} else {
-			res := method.Call(nil)
-			message = res[0].String()
+			message = "Failed to parse workflow!"
 		}
+	} else {
+		message = "Missing body!"
 	}
 	fmt.Fprint(w, message)
 }
