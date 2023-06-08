@@ -31,6 +31,6 @@ func main() {
 	if val, ok := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT"); ok {
 		listenAddr = ":" + val
 	}
-	http.HandleFunc("/api/invoketask", taskHandler)
+	http.HandleFunc("/api/InvokeTask", taskHandler)
 	http.ListenAndServe(listenAddr, nil)
 }

@@ -44,6 +44,7 @@ FROM golang:1.20.4 as build2
 WORKDIR /go/delivery
 COPY *.go .
 COPY *.mod .
+RUN go mod tidy
 RUN GOOS=linux GOARCH=amd64 go build -o /build/handler
 
 # Run Azure Functions
